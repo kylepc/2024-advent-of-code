@@ -1,5 +1,6 @@
 import itertools
 import re
+from typing import List
 
 
 def main():
@@ -8,8 +9,12 @@ def main():
 
     number = r'[0-9]{1,3}'
     mul_regex = re.compile(rf'mul\(({number},{number})\)')
-    muls = mul_regex.findall(data)
-    res = sum(itertools.starmap(lambda w, z: w * z, map(lambda x: map(lambda y: int(y), x.split(',')), muls)))
+    fn_calls: List[str] = mul_regex.findall(data)
+    int_pairs: List[List[int, int]] = map(lambda x:
+                                          map(lambda y: int(y), x.split(',')),
+                                          fn_calls)
+    products: List[int] = itertools.starmap(lambda w, z: w * z, int_pairs)
+    res = sum(products)
     print(res)
 
 
