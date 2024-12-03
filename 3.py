@@ -1,11 +1,15 @@
+import functools
 import itertools
+import operator
 import re
 from typing import List
 
 
+number = r'[0-9]{1,3}'
+mul_regex = re.compile(rf'mul\(({number},{number})\)')
+
+
 def part_one(data: str) -> int:
-    number = r'[0-9]{1,3}'
-    mul_regex = re.compile(rf'mul\(({number},{number})\)')
     fn_calls: List[str] = mul_regex.findall(data)
     int_pairs: List[List[int, int]] = map(lambda x:
                                           map(lambda y: int(y), x.split(',')),
@@ -15,7 +19,26 @@ def part_one(data: str) -> int:
 
 
 def part_two(data: str) -> int:
-    return 0
+    active = True
+    i = 0
+    total = 0
+    while i < len(data):
+        if active and data[i:].startswith('mul'):
+            inc = len('mul')
+            if match := mul_regex.match(data[i:]):
+                inc += len(f'({match.group(1)})')
+                total += functools.reduce(operator.mul, map(int, match.group(1).split(',')))
+        elif data[i:].startswith('do()'):
+            active = True
+            inc = len('do()')
+        elif data[i:].startswith('don\'t()'):
+            active = False
+            inc = len('don\'t()')
+        else:
+            inc = 1
+        i += inc
+
+    return total
 
 
 def main():
