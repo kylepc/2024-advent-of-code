@@ -21,14 +21,14 @@ def part_one(data: str) -> int:
 
 
 def part_two_iter(data: str) -> int:
-    def filter_closure(a: bool = True) -> Callable[[re.Match[str]], bool]:
-        def fn(m: re.Match[str]) -> bool:
-            nonlocal a
-            if m.group(0).startswith('don\'t'):  # order matters, "don't" starts with "do"
-                a = False
-            elif m.group(0).startswith('do'):
-                a = True
-            return a and m.group(0).startswith('mul')
+    def filter_closure(active: bool = True) -> Callable[[re.Match[str]], bool]:
+        def fn(match: re.Match[str]) -> bool:
+            nonlocal active
+            if match.group(0).startswith('don\'t'):  # order matters, "don't" starts with "do"
+                active = False
+            elif match.group(0).startswith('do'):
+                active = True
+            return active and match.group(0).startswith('mul')
         return fn
 
     fn_regex = re.compile(f'({mul_re}|{do_re}|{dont_re})')
