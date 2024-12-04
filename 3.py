@@ -2,11 +2,13 @@ import functools
 import itertools
 import operator
 import re
-from typing import List
-
+from typing import List, Callable
 
 number = r'[0-9]{1,3}'
-mul_regex = re.compile(rf'mul\(({number},{number})\)')
+mul_re = rf'mul\(({number},{number})\)'
+do_re = r'do\(\)'
+dont_re = r'don\'t\(\)'
+mul_regex = re.compile(mul_re)
 
 
 def part_one(data: str) -> int:
@@ -15,6 +17,26 @@ def part_one(data: str) -> int:
                                           map(lambda y: int(y), x.split(',')),
                                           fn_calls)
     products: List[int] = itertools.starmap(lambda w, z: w * z, int_pairs)
+    return sum(products)
+
+
+def part_two_iter(data: str) -> int:
+    def filter_closure(a: bool = True) -> Callable[[re.Match[str]], bool]:
+        def fn(m: re.Match[str]) -> bool:
+            nonlocal a
+            if m.group(0).startswith('don\'t'):  # order matters, "don't" starts with "do"
+                a = False
+            elif m.group(0).startswith('do'):
+                a = True
+            return a and m.group(0).startswith('mul')
+        return fn
+
+    fn_regex = re.compile(f'({mul_re}|{do_re}|{dont_re})')
+    fns = fn_regex.finditer(data)
+    active_muls = filter(filter_closure(), fns)
+    active_mul_inputs = map(lambda g: g.group(2), active_muls)
+    int_pairs = map(lambda x: map(int, x.split(',')), active_mul_inputs)
+    products = itertools.starmap(operator.mul, int_pairs)
     return sum(products)
 
 
@@ -47,6 +69,7 @@ def main():
 
     print(part_one(data))
     print(part_two(data))
+    print(part_two_iter(data))
 
 
 if __name__ == '__main__':
