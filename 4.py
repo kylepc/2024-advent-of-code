@@ -30,9 +30,10 @@ def part_one(data: List[str]) -> int:
     for i, row in enumerate(data):
         for j, _ in enumerate(row):
             forward = row[j:j + len(target)]
-            diag_right = list(map(walk_over(j, len(target), operator.add), data[i:len(target)]))
-            diag_left = list(map(walk_over(j, len(target), operator.sub), data[i:len(target)]))
-            to_check_forward = [forward, diag_left, diag_right]
+            down = list(map(lambda x: x[j], data[i:i + len(target)]))
+            diag_right = list(map(walk_over(j, len(target), operator.add), data[i: i + len(target)]))
+            diag_left = list(map(walk_over(j, len(target), operator.sub), data[i: i + len(target)]))
+            to_check_forward = [forward, down, diag_left, diag_right]
             to_check_reverse = map(lambda x: x[::-1], to_check_forward)
             to_check = itertools.chain(to_check_forward, to_check_reverse)
             count += sum(map(int, map(match_pred, filter(len_pred, to_check))))
