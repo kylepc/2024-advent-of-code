@@ -5,7 +5,6 @@ from typing import Tuple, List, Set
 def main():
     with open('6_input.txt', 'r') as f:
         lines = [line.strip() for line in f.readlines()]
-    print(len(lines))
     def enum_line(i: int, line: str): return map(lambda enum: (i, *enum), enumerate(line))
     line_enums = itertools.starmap(enum_line, enumerate(lines))
     s = sorted(itertools.chain(*line_enums), key=lambda x: x[2])
@@ -15,7 +14,7 @@ def main():
     start = next(map(get_pos, filter(is_start, s)))
     obstacles = list(map(get_pos, filter(is_obstacle, s)))
 
-    direction = (0, 1)
+    direction = (-1, 0)
     visited = set()
     pos = tuple(start)
     while True:
@@ -32,7 +31,7 @@ def main():
             direction = direction[1], direction[0] * -1
         pos = next_pos
 
-    print(len(visited))  # 4646 is too low
+    print(len(visited))  # 4646 too low; 5307 too high
 
 
 if __name__ == '__main__':
