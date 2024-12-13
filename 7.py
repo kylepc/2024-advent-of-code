@@ -1,7 +1,4 @@
-import functools
-import itertools
-import operator
-from typing import Callable, Tuple, List
+from typing import List
 
 
 def is_valid(test: int, numbers: List[int]) -> bool:
@@ -23,34 +20,13 @@ def main():
     assert len(lines) == len(equations)
 
     result = 0
-    result_new = 0
     for eq in equations:
         test = eq[0]
         numbers = eq[1]
-        num_pairs = len(numbers) - 1
-        # including len(paris) elements of each so that we get all possible permutations +++, ++*, ... ***
-        # but is that necessary? Is there a smaller iterable I could pass to this function?
-        # TODO: can't do this, takes way too long
-        # op_permutations = list(itertools.permutations([operator.add] * num_pairs + [operator.mul] * num_pairs, num_pairs))
-        #
-        # def combiner(op_perm: List[Callable[[int, int], int]]) -> Callable[[int, int], int]:
-        #     op_it = iter(op_perm)
-        #
-        #     def fn(a: int, b: int) -> int:
-        #         op = next(op_it)
-        #         return op(a, b)
-        #     return fn
-        #
-        # for op_permutation in op_permutations:
-        #     if functools.reduce(combiner(op_permutation), numbers) == test:
-        #         result += test
-        #         break
-
         if is_valid(test, numbers):
-            result_new += test
+            result += test
 
     print(result)
-    print(result_new)
 
 
 if __name__ == '__main__':
